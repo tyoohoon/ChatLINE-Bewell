@@ -5,6 +5,7 @@ import functions as func
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from collections import Counter
+import datetime
 
 driver = webdriver.Chrome(
     executable_path=r"C:/SeleniumDrivers/chromedriver.exe")
@@ -22,10 +23,10 @@ chat_text_freq_dict = {}
 # ==calculate response rate by (num green badge)/(num all chat)===================================
 green_badge = driver.find_elements_by_css_selector(
     '.badge.badge-pin.badge-primary.border-0')
-print('did not response rate:')
-print(len(green_badge)/len(chat_list))
-print(len(green_badge))
-print(len(chat_list))
+print('response rate:')
+print(1-len(green_badge)/len(chat_list))
+# print(len(green_badge))
+# print(len(chat_list))
 # ------------------------------------------------------------------------------------------------
 
 for chat in chat_list:  # iterate customers
@@ -43,8 +44,6 @@ for chat in chat_list:  # iterate customers
     chat_text_dict[customer_name] = []
 
     # ===each customer chat=====================================================
-    group_bubble_list = driver.find_elements_by_css_selector(
-        '.chat-primary, .chat-secondary')
     bubble_list = driver.find_elements_by_css_selector('.chat-item-text')
     for bubble in bubble_list:
         chat_text_dict[customer_name].append(
@@ -58,6 +57,18 @@ for chat in chat_list:  # iterate customers
             chat_text_dict[customer_name]).count(tag)
     # ----------------------------------------------------------------------------
     i += 1
+print(chat_text_freq_dict)
+print(chat_text_dict)
 
-# print(chat_text_dict)
-# print(chat_text_freq_dict)
+
+# == avg response time ============================================================================
+isCus = False
+number_of_time_intervals = 0
+sum_of_time_intervals = 0
+customer_sent_time = ''
+sale_sent_time = ''
+
+all_sent_time = driver.find_elements_by_css_selector(
+    '.chat-secondary span, .chat-primary span')  # also contains 'อ่านแล้ว'
+
+# ------------------------------------------------------------------------------------------------
