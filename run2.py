@@ -16,11 +16,12 @@ WebDriverWait(driver, 30).until(
 )
 i = 0
 chat_list = driver.find_elements_by_class_name('list-group-item')
-chat_text_dict = []
+chat_message_details = []
 chat_text_freq_dict = []
 
 for chat in chat_list:  # iterate customers
-    message_details = []
+    driver.implicitly_wait(2)  # to avoid StaleElementReferenceException
+    current_chat_message_details = []
     try:
         chat.click()
         driver.implicitly_wait(1)
@@ -41,6 +42,7 @@ for chat in chat_list:  # iterate customers
     date = ''
 
     for chat_section in list_chat_section:
+        driver.implicitly_wait(2)  # to avoid StaleElementReferenceException
         sender_id = driver.current_url.split('/')[-1]
         message_type = ''
         message_text = ''
@@ -74,7 +76,7 @@ for chat in chat_list:  # iterate customers
                     print('error------------------')
                     print(date_original)
 
-        if chat_section.get_attribute("class") == 'chat chat-text-dark chat-reverse chat-primary':
+        if 'chat-primary' in chat_section.get_attribute("class"):
             list_message_bubble = chat_section.find_elements_by_css_selector(
                 '.chat-body')
             for message_bubble in list_message_bubble:
@@ -90,7 +92,7 @@ for chat in chat_list:  # iterate customers
                     message_text = ''
             time_original = chat_section.find_elements_by_css_selector(
                 '.chat-sub span')[-1].get_attribute('innerText')
-            message_details.append({
+            current_chat_message_details.append({
                 'message_id': message_id,
                 'sender_id': sender_id,
                 'sent_by': sent_by,
@@ -99,7 +101,7 @@ for chat in chat_list:  # iterate customers
                 'time': datetime.combine(date, datetime.strptime(time_original, '%H.%M น.').time()),
             })
 
-        if chat_section.get_attribute("class") == 'chat chat-text-dark chat-secondary':
+        if 'chat-secondary' in chat_section.get_attribute("class"):
             list_message_bubble = chat_section.find_elements_by_css_selector(
                 '.chat-body')
             sent_by = 'customer'
@@ -116,7 +118,7 @@ for chat in chat_list:  # iterate customers
                     message_text = ''
             time_original = chat_section.find_elements_by_css_selector(
                 '.chat-sub span')[-1].get_attribute('innerText')
-            message_details.append({
+            current_chat_message_details.append({
                 'message_id': message_id.split("/")[-1],
                 'sender_id': sender_id,
                 'sent_by': sent_by,
@@ -124,8 +126,7 @@ for chat in chat_list:  # iterate customers
                 'message_text': message_text,
                 'time': datetime.combine(date, datetime.strptime(time_original, '%H.%M น.').time()),
             })
-
-    print(message_details)
+    chat_message_details.append(current_chat_message_details)
+    print(chat_message_details)
     # time_origital = chat_section.find_elements_by_css_selector('.chat-sub span')[-1].get_attribute('innerHTML')
     # print(date_original)
-    break
