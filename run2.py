@@ -22,12 +22,12 @@ login_button = WebDriverWait(driver, 30).until(
 login_button.click()
 
 wait = WebDriverWait(driver, 1)
-# wait.until(EC.element_to_be_clickable(
-#     (By.CSS_SELECTOR, 'input[name*="tid"]'))).send_keys(lp.EMAIL)
-# wait.until(EC.element_to_be_clickable(
-#     (By.CSS_SELECTOR, 'input[name*="tpasswd"]'))).send_keys(lp.PASS)
-# second_login_button = driver.find_element_by_class_name('MdBtn01')
-# second_login_button.click()
+wait.until(EC.element_to_be_clickable(
+    (By.CSS_SELECTOR, 'input[name*="tid"]'))).send_keys(lp.EMAIL)
+wait.until(EC.element_to_be_clickable(
+    (By.CSS_SELECTOR, 'input[name*="tpasswd"]'))).send_keys(lp.PASS)
+second_login_button = driver.find_element_by_class_name('MdBtn01')
+second_login_button.click()
 
 WebDriverWait(driver, 30).until(
     EC.presence_of_element_located(
@@ -72,7 +72,7 @@ for c in range(0, len(chat_list)):
         for i in range(0, len(list_chat_section)):
             # to avoid StaleElementReferenceException
             driver.implicitly_wait(1)
-            sender_id = driver.current_url.split('/')[-1]
+            customer_id = driver.current_url.split('/')[-1]
             message_type = ''
             message_text = ''
             if list_chat_section[i].get_attribute("class") == 'chatsys-content':
@@ -92,11 +92,15 @@ for c in range(0, len(chat_list)):
                         print('-')
                         # print(date_original)
 
-            if 'chat-reverse' in list_chat_section[i].get_attribute("class"):
+            elif 'chat-reverse' in list_chat_section[i].get_attribute("class"):
                 list_message_bubble = list_chat_section[i].find_elements_by_css_selector(
                     '.chat-body')
                 sent_by = 'sale'
-                sender_id = '1234'
+                sale_id = '1234'
+                time_original = list_chat_section[i].find_elements_by_css_selector(
+                    '.chat-sub span')[-1].get_attribute('innerText')
+                time = datetime.combine(date, datetime.strptime(
+                    time_original, '%H.%M น.').time())
                 for message_bubble in list_message_bubble:
                     message_id = message_bubble.get_attribute('data-id')
                     try:
@@ -106,14 +110,11 @@ for c in range(0, len(chat_list)):
                     except:
                         message_type = 'not text'
                         message_text = ''
-                time_original = list_chat_section[i].find_elements_by_css_selector(
-                    '.chat-sub span')[-1].get_attribute('innerText')
-                time = datetime.combine(date, datetime.strptime(
-                    time_original, '%H.%M น.').time())
-                print(message_id, sender_id, sent_by,
-                      message_type, message_text)
-                writer.writerow([message_id, sender_id, sent_by,
-                                 message_type, message_text, time])
+                    print(message_id, customer_id, sent_by,
+                          message_type, message_text)
+                    writer.writerow(
+                        [message_id, customer_id, sale_id, sent_by, message_type, time, message_text])
+
                 # f.write(', '.join([message_id, sender_id, sent_by,
                 #         message_type, message_text]))
                 # current_chat_message_details.append({
@@ -125,12 +126,17 @@ for c in range(0, len(chat_list)):
                 #     'time': datetime.combine(date, datetime.strptime(time_original, '%H.%M น.').time()),
                 # })
 
-            if 'chat-secondary' in list_chat_section[i].get_attribute("class"):
+            elif 'chat-secondary' in list_chat_section[i].get_attribute("class"):
                 list_message_bubble = list_chat_section[i].find_elements_by_css_selector(
                     '.chat-body')
+                sale_id = '1234'
                 sent_by = 'customer'
                 # sender_id = driver.current_url
                 # print(sender_id)
+                time_original = list_chat_section[i].find_elements_by_css_selector(
+                    '.chat-sub span')[-1].get_attribute('innerText')
+                time = datetime.combine(date, datetime.strptime(
+                    time_original, '%H.%M น.').time())
                 for message_bubble in list_message_bubble:
                     message_id = message_bubble.get_attribute('data-id')
                     try:
@@ -140,15 +146,10 @@ for c in range(0, len(chat_list)):
                     except:
                         message_type = 'not text'
                         message_text = ''
-                time_original = list_chat_section[i].find_elements_by_css_selector(
-                    '.chat-sub span')[-1].get_attribute('innerText')
-                time = datetime.combine(date, datetime.strptime(
-                    time_original, '%H.%M น.').time())
-                print(message_id, sender_id, sent_by,
-                      message_type, message_text)
-                writer.writerow([message_id, sender_id, sent_by,
-                                 message_type, message_text, time])
-
+                    print(message_id, customer_id, sent_by,
+                          message_type, message_text)
+                    writer.writerow([message_id, customer_id, sale_id, sent_by,
+                                    message_type, time, message_text])
                 for keyword in const.KEYWORDS:
                     if keyword in message_text:
                         if(keyword == 'สวัสดี'):
@@ -182,8 +183,8 @@ for c in range(0, len(chat_list)):
         if driver.find_element_by_class_name("btn-primary").is_enabled():
             driver.find_element_by_class_name("btn-primary").click()
         else:
-            close_button = driver.find_element_by_css_selector(
-                '.close')
+            close_button = driver.find_elements_by_css_selector(
+                '.close')[-1]
             close_button.click()
 
         # chat_message_details.append(current_chat_message_details)
