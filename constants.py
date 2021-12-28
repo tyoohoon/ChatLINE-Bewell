@@ -1,4 +1,5 @@
-BASE_URL = 'https://chat.line.biz/'
+BASE_URL = 'https://chat.line.biz/Ua1070018fe6d8cf535feba9cc479c366'  # bewell
+# BASE_URL = 'https://chat.line.biz/Ud23b08268fe9d8e33423e43f17a8fc0d'  # bot
 THAI_MONTH = {
     '01': 'ม.ค.',
     '02': 'ก.พ.',
@@ -15,3 +16,9 @@ THAI_MONTH = {
 }
 
 KEYWORDS = ['สวัสดี', 'หวัดดี']
+
+KEYWORDS_DICT = {
+    'โต๊ะ': 'สนใจโต๊ะ',
+    'โต็ะ': 'สนใจโต็ะ',
+    'เก้าอี้': 'สนใจเก้าอี้'
+}
