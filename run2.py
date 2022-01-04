@@ -11,6 +11,7 @@ import csv
 from selenium.webdriver.common.keys import Keys
 import loginpass as lp
 import time as t
+from datetime import date
 
 driver = webdriver.Chrome(
     executable_path=r"C:/SeleniumDrivers/chromedriver.exe")
@@ -35,7 +36,10 @@ WebDriverWait(driver, 30).until(
         (By.CSS_SELECTOR, '.list-group.list-group-flush'))
 )
 
-f = open("chat_log.csv", "w", encoding="utf-8")
+f = open(str(date.today().strftime("%d-%m-%Y")) +
+         "chat_log.csv", "w", encoding="utf-8")
+# df = pd.read_csv(r'C:\\Users\\tatpi\wan\\internDPlus\\python_selenium\\'+ dt.today().strftime("%d-%m-%Y") +'.csv')
+
 writer = csv.writer(f)
 chat_not_read = False
 
@@ -48,12 +52,13 @@ while True:
     t.sleep(2)     # Wait to load the page.
     the_len = len(driver.find_elements_by_class_name('list-group-item'))
     print(the_len)
-    if the_len > 300:
+    if the_len > 150:
         break
 
 chat_list = driver.find_elements_by_class_name('list-group-item')
 
-for c in range(0, len(chat_list)):  # len(chat_list)
+for c in range(10, len(chat_list)):  # len(chat_list)
+    print(c)
     if len(chat_list[c].find_elements_by_class_name('badge-pin')) >= 1:
         continue
         chat_not_read = True
@@ -70,7 +75,7 @@ for c in range(0, len(chat_list)):  # len(chat_list)
     )
 
     # ===each customer chat=====================================================
-    print('------------------------')
+    # print('------------------------')
     chat_window = driver.find_element_by_css_selector(
         '.p-3.h-100.overflow-y-auto')
     while True:
@@ -88,12 +93,20 @@ for c in range(0, len(chat_list)):  # len(chat_list)
     date = ''
     tags = set()
     customer_id = driver.current_url.split('/')[-1]
+    # print(customer_id)
     cs_id = driver.find_elements_by_css_selector(
         '.chat-header')[-1].get_attribute('innerText')
+    # not_found_chatsys = True
     try:
         # for chat_section in list_chat_section:
         for i in range(0, len(list_chat_section)):  #
             # to avoid StaleElementReferenceException
+            # while not_found_chatsys:
+            #     if(list_chat_section[i].get_attribute("class") == 'chatsys-content'):
+            #         not_found_chatsys = False
+            #     else:
+            #         continue
+
             driver.implicitly_wait(1)
             message_type = ''
             message_text = ''
@@ -114,7 +127,7 @@ for c in range(0, len(chat_list)):  # len(chat_list)
                         print('-')
 
             # CS
-            elif 'chat-reverse' in list_chat_section[i].get_attribute("class"):
+            elif 'chat-reverse' in list_chat_section[i].get_attribute("class") and date:
                 list_message_bubble = list_chat_section[i].find_elements_by_css_selector(
                     '.chat-body')
                 sent_by = 'sale'
@@ -122,6 +135,7 @@ for c in range(0, len(chat_list)):  # len(chat_list)
                     'innerText')
                 time_original = list_chat_section[i].find_elements_by_css_selector(
                     '.chat-sub span')[-1].get_attribute('innerText')
+
                 time = datetime.combine(date, datetime.strptime(
                     time_original, '%H.%M น.').time())
                 for message_bubble in list_message_bubble:
@@ -133,13 +147,13 @@ for c in range(0, len(chat_list)):  # len(chat_list)
                     except:
                         message_type = 'not text'
                         message_text = ''
-                    print(message_id, customer_id, sent_by,
-                          message_type, message_text)
+                    # print(message_id, customer_id, sent_by,
+                    #       message_type, message_text)
                     writer.writerow(
                         [message_id, customer_id, cs_id, sent_by, message_type, time, message_text])
 
             # customer
-            elif 'chat-secondary' in list_chat_section[i].get_attribute("class"):
+            elif 'chat-secondary' in list_chat_section[i].get_attribute("class") and date:
                 list_message_bubble = list_chat_section[i].find_elements_by_css_selector(
                     '.chat-body')
                 sent_by = 'customer'
@@ -163,12 +177,12 @@ for c in range(0, len(chat_list)):  # len(chat_list)
                     except:
                         message_type = 'not text'
                         message_text = ''
-                    print(message_id, customer_id, sent_by,
-                          message_type, message_text)
+                    # print(message_id, customer_id, sent_by,
+                    #       message_type, message_text)
                     writer.writerow([message_id, customer_id, cs_id, sent_by,
                                     message_type, time, message_text])
 
-    #     # add tags
+    #     # add tags ----------------------------------------------------------------------------------------------
 
     #     # edit_tag_button = driver.find_elements_by_css_selector(
     #     #     '.mt-3 a')[-1]

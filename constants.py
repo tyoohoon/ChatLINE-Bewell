@@ -1,5 +1,6 @@
 BASE_URL = 'https://chat.line.biz/Ua1070018fe6d8cf535feba9cc479c366'  # bewell
 # BASE_URL = 'https://chat.line.biz/Ud23b08268fe9d8e33423e43f17a8fc0d'  # bot
+# BASE_URL = 'https://chat.line.biz/Ua1070018fe6d8cf535feba9cc479c366/chat/Uabf6a4518110286f074cc8573fe190ae'
 THAI_MONTH = {
     '01': 'ม.ค.',
     '02': 'ก.พ.',
