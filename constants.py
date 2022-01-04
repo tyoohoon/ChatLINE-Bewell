@@ -1,5 +1,3 @@
-BASE_URL = 'https://chat.line.biz/Ua1070018fe6d8cf535feba9cc479c366'  # bewell
-
 # email และ password ที่ใช้ login LINE ----------------------------------
 EMAIL = ''
 PASS = ''
@@ -7,9 +5,20 @@ PASS = ''
 # วันที่ที่ต้องการหา KPI ---------------------------------------------------
 TARGET_DATE = '2022-01-04'  # ปปปป-ดด-วว
 
-# จำนวนห้องแชทที่ต้องการอ่าน ---------------------------------------------------
+# จำนวนห้องแชทที่ต้องการอ่าน ----------------------------------------------
 CHATROOM_NUM = 50
 
+# =====================================================================
+# =====================================================================
+
+BASE_URL = 'https://chat.line.biz/Ua1070018fe6d8cf535feba9cc479c366'  # bewell
+MONGO_CONNECTION = 'mongodb+srv://digitalcommerce:digitalcommerce@cluster0.i5rre.mongodb.net/line_db?retryWrites=true&w=majority'
+DATABASE_NAME = 'line_db'
+
+CSV_CHAT_LOG_PATH = 'C:/Users/tatpi/wan/internDPlus/python_selenium/'
+
+# =====================================================================
+# =====================================================================
 
 THAI_MONTH = {
     '01': 'ม.ค.',
