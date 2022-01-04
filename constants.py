@@ -1,6 +1,16 @@
 BASE_URL = 'https://chat.line.biz/Ua1070018fe6d8cf535feba9cc479c366'  # bewell
-# BASE_URL = 'https://chat.line.biz/Ud23b08268fe9d8e33423e43f17a8fc0d'  # bot
-# BASE_URL = 'https://chat.line.biz/Ua1070018fe6d8cf535feba9cc479c366/chat/Uabf6a4518110286f074cc8573fe190ae'
+
+# email และ password ที่ใช้ login LINE ----------------------------------
+EMAIL = ''
+PASS = ''
+
+# วันที่ที่ต้องการหา KPI ---------------------------------------------------
+TARGET_DATE = '2022-01-04'  # ปปปป-ดด-วว
+
+# จำนวนห้องแชทที่ต้องการอ่าน ---------------------------------------------------
+CHATROOM_NUM = 50
+
+
 THAI_MONTH = {
     '01': 'ม.ค.',
     '02': 'ก.พ.',

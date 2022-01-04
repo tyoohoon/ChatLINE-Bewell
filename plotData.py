@@ -8,7 +8,7 @@ client = MongoClient(
 db = client['line_db']
 
 filename = 'C:/Users/tatpi/wan/internDPlus/python_selenium/' + \
-    str(dt.today().strftime("%d-%m-%Y")) + "chat_log.csv"
+    str(dt.today().strftime("%Y-%m-%d")) + "_chat_log.csv"
 
 # df = pd.read_csv(
 #     r'C:\Users\tatpi\wan\internDPlus\python_selenium\chat_log.csv')

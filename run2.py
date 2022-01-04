@@ -36,9 +36,8 @@ WebDriverWait(driver, 30).until(
         (By.CSS_SELECTOR, '.list-group.list-group-flush'))
 )
 
-f = open(str(date.today().strftime("%d-%m-%Y")) +
-         "chat_log.csv", "w", encoding="utf-8")
-# df = pd.read_csv(r'C:\\Users\\tatpi\wan\\internDPlus\\python_selenium\\'+ dt.today().strftime("%d-%m-%Y") +'.csv')
+f = open(str(date.today().strftime("%Y-%m-%d")) +
+         "_chat_log.csv", "w", encoding="utf-8")
 
 writer = csv.writer(f)
 chat_not_read = False
@@ -52,12 +51,12 @@ while True:
     t.sleep(2)     # Wait to load the page.
     the_len = len(driver.find_elements_by_class_name('list-group-item'))
     print(the_len)
-    if the_len > 150:
+    if the_len > const.CHATROOM_NUM:
         break
 
 chat_list = driver.find_elements_by_class_name('list-group-item')
 
-for c in range(10, len(chat_list)):  # len(chat_list)
+for c in range(0, len(chat_list)):  # len(chat_list)
     print(c)
     if len(chat_list[c].find_elements_by_class_name('badge-pin')) >= 1:
         continue
@@ -82,8 +81,15 @@ for c in range(10, len(chat_list)):  # len(chat_list)
         driver.execute_script(
             'arguments[0].scrollTop = arguments[0].scrollTop - arguments[0].offsetHeight;', chat_window)
         t.sleep(1)     # Wait to load the page.
+
+        # When to stop scrolling each chat -----------------------------------------
         if (len(driver.find_elements_by_xpath("//*[text()='ผู้ใช้นี้เพิ่มคุณเป็นเพื่อนแล้ว']")) > 0):
             break
+        if (chat_window.find_elements_by_css_selector("*")[0].get_attribute("class") == 'chatsys'):
+            break
+        # if (len(driver.find_elements_by_xpath("//*[text()='เมื่อวาน']")) > 0):
+        #     break
+        # ---------------------------------------------------------------------------
 
     list_chat_section = driver.find_elements_by_css_selector(
         '.chatsys-content, .chat-secondary, .chat-reverse')
@@ -99,14 +105,7 @@ for c in range(10, len(chat_list)):  # len(chat_list)
     # not_found_chatsys = True
     try:
         # for chat_section in list_chat_section:
-        for i in range(0, len(list_chat_section)):  #
-            # to avoid StaleElementReferenceException
-            # while not_found_chatsys:
-            #     if(list_chat_section[i].get_attribute("class") == 'chatsys-content'):
-            #         not_found_chatsys = False
-            #     else:
-            #         continue
-
+        for i in range(0, len(list_chat_section)):
             driver.implicitly_wait(1)
             message_type = ''
             message_text = ''
@@ -119,12 +118,36 @@ for c in range(10, len(chat_list)):  # len(chat_list)
                     date = datetime.today().date()
                 else:
                     try:
-                        date_original = date_original.split(' ')[0]+list(const.THAI_MONTH.keys())[list(
-                            const.THAI_MONTH.values()).index(date_original.split(' ')[1])]+str(datetime.now().year)
+                        # date_original = date_original.split(' ')[0]+list(const.THAI_MONTH.keys())[list(
+                        #     const.THAI_MONTH.values()).index(date_original.split(' ')[1])]+str(datetime.now().year)
+                        # print('date_original: ', date_original)
+                        day, month, weekday_or_year = date_original.split(' ')
+                        if(len(day) == 1):
+                            day = '0'+day
+                        # print('day, month, weekday_or_year ',
+                        #       day, month, weekday_or_year)
+                        # print(any(char.isdigit() for char in weekday_or_year))
+
+                        if(any(char.isdigit() for char in weekday_or_year)):
+                            # print('in if ------------------------')
+                            date_original = day + list(const.THAI_MONTH.keys())[
+                                list(const.THAI_MONTH.values()).index(month)]+weekday_or_year
+                            # print('date_orirginal in if', date_original)
+                        else:
+                            date_original = day+list(const.THAI_MONTH.keys())[list(
+                                const.THAI_MONTH.values()).index(month)]+str(datetime.now().year)
+
                         date = datetime.strptime(
-                            date_original, '%d%m%Y').date()
-                    except:
-                        print('-')
+                            date_original.strip(), '%d%m%Y').date()
+                        # print('converted_date_original', date_original)
+                        # print('--------------------')
+                        # 31 ธ.ค. 2021
+                        # 1 ม.ค. (ส.)
+                    except Exception as e:
+                        print('Error: ', e)
+                        print('converted_date_original:', date_original)
+                        print('len: ', len(date_original))
+                        print('----------')
 
             # CS
             elif 'chat-reverse' in list_chat_section[i].get_attribute("class") and date:
